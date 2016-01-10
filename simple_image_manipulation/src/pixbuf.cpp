@@ -1,28 +1,19 @@
 #include "pixbuf.h"
+#include <iostream>
 
 
 Pixbuf::Pixbuf()
 {
-    _ref = gdk_pixbuf_new(GDK_COLORSPACE_RGB, false, 8, 500, 500);
-    gdk_pixbuf_fill(_ref, 0xffff00ff );
+	_width = 500;
+	_height = 500;
+	
+    _ref = gdk_pixbuf_new(GDK_COLORSPACE_RGB, false, 8, _width, _height);
+    gdk_pixbuf_fill(_ref, 0xffffffff );
     _scale = 1;
     
-    auto surface = cairo_image_surface_create(gdk_pixbuf_get_has_alpha(_ref) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24, gdk_pixbuf_get_width(_ref), gdk_pixbuf_get_height(_ref));
-    cairo_t *cr = cairo_create(surface);;
-
-    gdk_cairo_set_source_pixbuf(cr, _ref, 0, 0);
-
-    cairo_paint(cr);
-
-    cairo_set_source_rgb(cr, 1, 1, 1);
-    cairo_rectangle (cr, 0, 0, 500, 500);
-    cairo_fill(cr);
-    cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_rectangle (cr, 10, 10, 15, 1500);
-    
-    cairo_fill(cr);
-    cairo_surface_destroy (surface);
-    cairo_destroy (cr);
+    n_channels = gdk_pixbuf_get_n_channels(_ref);
+	rowstride = gdk_pixbuf_get_rowstride(_ref);
+	pixels = gdk_pixbuf_get_pixels(_ref);
 };
 
 
@@ -40,21 +31,23 @@ void Pixbuf::set_scale(int scale)
 
 
 
-void Pixbuf::point(int x, int y)
+void Pixbuf::point(int x, int y, int r, int g, int b)
 {
-    cairo_t *cr;
+	for(int i = 0; i < _scale; i++)
+	{
+		for(int l = 0; l < _scale; l++)
+		{
+			auto p = pixels + (y * _scale + l) * rowstride + (x * _scale + i) * n_channels;
+			p[0] = r;
+			p[1] = g;
+			p[2] = b;
+		};
+	};
+};
 
-    auto surface = cairo_image_surface_create(gdk_pixbuf_get_has_alpha(_ref) ? CAIRO_FORMAT_ARGB32 : CAIRO_FORMAT_RGB24, gdk_pixbuf_get_width(_ref), gdk_pixbuf_get_height(_ref));
-    
-    cr = cairo_create(surface);
-    
-    gdk_cairo_set_source_pixbuf(cr, _ref, 0, 0);
-    cairo_paint(cr);
 
-    cairo_fill(cr);
-    cairo_set_source_rgb(cr, 1, 0, 0);
-    cairo_rectangle (cr, x, y, x + _scale, y + _scale);
-    cairo_surface_destroy (surface);
-    cairo_destroy (cr);
+guchar* Pixbuf::get_point(int x, int y)
+{
+	return (pixels + (y * _scale) * rowstride + (x * _scale) * n_channels);
 };
 

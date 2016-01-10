@@ -12,6 +12,8 @@ public:
     Image();
     
     void set_from_pixbuf(Pixbuf *pixbuf);
+    
+    void refresh();
 };
 
 

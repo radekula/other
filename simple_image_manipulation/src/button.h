@@ -15,6 +15,8 @@ public:
 	
 public:
 	void set_label(std::string label);
+	
+	void set_on_clicked(void (*fun)(GtkWidget*, void*));
 };
 
 
