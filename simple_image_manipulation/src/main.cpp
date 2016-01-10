@@ -3,8 +3,9 @@
 #include "hbox.h"
 #include "button.h"
 #include "window.h"
-#include "drawing_area.h"
+#include "image.h"
 #include "label.h"
+#include "pixbuf.h"
 
 
 
@@ -29,10 +30,11 @@ int main(int argc, char *argv[])
 	menu_hbox->add(l1, 0, 0, 0);
 	main_vbox->add(menu_hbox, 0, 0, 0);
 	
-	DrawingArea *drawing_area = new DrawingArea();
-	drawing_area->resize(500,500);
-
-	main_vbox->add(drawing_area, 1, 1, 0);    
+	Image *image = new Image();
+	main_vbox->add(image, 1, 1, 0);
+    
+    Pixbuf *pixbuf = new Pixbuf();
+    image->set_from_pixbuf(pixbuf);    
 
 	HBox *button_hbox = new HBox();
 	Button *redraw_button = new Button("Rysuj");

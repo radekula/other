@@ -13,5 +13,6 @@ all:
 		$(CC) $(CFLAGS) -c src/drawing_area.cpp -o obj/drawing_area.o
 		$(CC) $(CFLAGS) -c src/button.cpp -o obj/button.o
 		$(CC) $(CFLAGS) -c src/label.cpp -o obj/label.o
+		$(CC) $(CFLAGS) -c src/image.cpp -o obj/image.o
 		
 		$(CC) -o simple_image_manipulation obj/*.o $(LIBS) 
