@@ -10,11 +10,8 @@
 #include "image.h"
 #include "label.h"
 #include "pixbuf.h"
-
-
-Pixbuf *pixbuf;
-Image *image;
-Label *sasiedztwo_label;
+#include "toggle_button.h"
+#include "table.h"
 
 
 class cords
@@ -27,13 +24,16 @@ public:
 };
 
 
-bool sprawdzony[200][200];
 
+
+Pixbuf *pixbuf;
+Image *image;
+ToggleButton *sasiedztwo[3][3];
+bool sprawdzony[101][101];
 std::list<std::shared_ptr<cords>> points;
+bool do_the_job = false;
 
 
-
-int sasiedztwo = 4;
 
 
 
@@ -45,294 +45,52 @@ int refresh_screen(void *)
 	return 1;
 };
 
+
+
 int fill_to_line(void *data)
 {
-	if(points.empty())
+	if(points.empty() || do_the_job == false)
 		return 0;
-	
+		
 	auto it = points.begin();
 	
 	auto x = (*it)->x;
 	auto y = (*it)->y;
-	pixbuf->point(x, y, 255,0,0);
-
-	switch(sasiedztwo)
+	pixbuf->point(x, y, 255,0,0);	
+	
+	for(int s_y = 0; s_y < 3; s_y++)
 	{
-		case 4:
+		for(int s_x = 0; s_x < 3; s_x++)
+		{	
+			if(s_x == 1 && s_y == 1)
+				continue;
+				
+			if(sasiedztwo[s_x][s_y]->get_active())
 			{
-				if(x < pixbuf->_width / pixbuf->_scale && !sprawdzony[x+1][y])
-				{
-					auto pixel1 = pixbuf->get_point(x + 1, y);
-					if(pixel1[0] == 255 && pixel1[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x + 1;
-						point->y = y;
-	
-						points.push_back(point);
-					};
+				int n_x = (x + s_x) - 1;
+				int n_y = (y + s_y) - 1;
+				
+				if(n_x < 0 || n_x >= 100)
+					continue;
+
+				if(n_y < 0 || n_y >= 100)
+					continue;
 					
-					sprawdzony[x+1][y] = true;
-				};
-
-				if(x > 0 && !sprawdzony[x-1][y])
-				{
-					auto pixel2 = pixbuf->get_point((x - 1), y);
-					if(pixel2[0] == 255 && pixel2[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x - 1;
-						point->y = y;
-	
-						points.push_back(point);
-					};
-					sprawdzony[x-1][y] = true;
-				};
-				
-				if(y < pixbuf->_height / pixbuf->_scale && !sprawdzony[x][y + 1])
-				{
-					auto pixel3 = pixbuf->get_point(x, (y + 1));
-					if(pixel3[0] == 255 && pixel3[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x;
-						point->y = y + 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x][y + 1] = true;
-				};
-
-				if(y > 0  && !sprawdzony[x][y - 1])
-				{
-					auto pixel4 = pixbuf->get_point(x, (y - 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x;
-						point->y = y - 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x][y - 1] = true;
-				};
-			}
-			break;
-		case 6:
-			{
-				if(x < pixbuf->_width / pixbuf->_scale && !sprawdzony[x+1][y])
-				{
-					auto pixel1 = pixbuf->get_point(x + 1, y);
-					if(pixel1[0] == 255 && pixel1[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x + 1;
-						point->y = y;
-	
-						points.push_back(point);
-					};
+				if(sprawdzony[n_x][n_y])
+					continue;
 					
-					sprawdzony[x+1][y] = true;
-				};
-
-				if(x > 0 && !sprawdzony[x-1][y])
+				auto pixel = pixbuf->get_point(n_x, n_y);
+				if(pixel[0] == 255 && pixel[1] == 255)
 				{
-					auto pixel2 = pixbuf->get_point((x - 1), y);
-					if(pixel2[0] == 255 && pixel2[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x - 1;
-						point->y = y;
-	
-						points.push_back(point);
-					};
-					sprawdzony[x-1][y] = true;
+					std::shared_ptr<cords> point(new cords);
+					point->x = n_x;
+					point->y = n_y;
+					points.push_back(point);
 				};
-				
-				if(y < pixbuf->_height / pixbuf->_scale && !sprawdzony[x][y + 1])
-				{
-					auto pixel3 = pixbuf->get_point(x, (y + 1));
-					if(pixel3[0] == 255 && pixel3[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x;
-						point->y = y + 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x][y + 1] = true;
-				};
-
-				if(y > 0  && !sprawdzony[x][y - 1])
-				{
-					auto pixel4 = pixbuf->get_point(x, (y - 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x;
-						point->y = y - 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x][y - 1] = true;
-				};
-				
-				if(y > 0 && x > 0 && !sprawdzony[x - 1][y - 1])
-				{
-					auto pixel4 = pixbuf->get_point((x - 1), (y - 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x - 1;
-						point->y = y - 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x - 1][y - 1] = true;
-				};
-
-				if(y < pixbuf->_height / pixbuf->_scale && x < pixbuf->_width / pixbuf->_scale && !sprawdzony[x + 1][y + 1])
-				{
-					auto pixel4 = pixbuf->get_point((x + 1), (y + 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x + 1;
-						point->y = y + 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x + 1][y + 1] = true;
-				};
-			}
-			break;
-		case 8:
-			{
-				if(x < pixbuf->_width / pixbuf->_scale && !sprawdzony[x+1][y])
-				{
-					auto pixel1 = pixbuf->get_point(x + 1, y);
-					if(pixel1[0] == 255 && pixel1[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x + 1;
-						point->y = y;
-	
-						points.push_back(point);
-					};
 					
-					sprawdzony[x+1][y] = true;
-				};
-
-				if(x > 0 && !sprawdzony[x-1][y])
-				{
-					auto pixel2 = pixbuf->get_point((x - 1), y);
-					if(pixel2[0] == 255 && pixel2[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x - 1;
-						point->y = y;
-	
-						points.push_back(point);
-					};
-					sprawdzony[x-1][y] = true;
-				};
-				
-				if(y < pixbuf->_height / pixbuf->_scale && !sprawdzony[x][y + 1])
-				{
-					auto pixel3 = pixbuf->get_point(x, (y + 1));
-					if(pixel3[0] == 255 && pixel3[1] == 255)
-					{
-						std::shared_ptr<cords> point(new cords);
-						point->x = x;
-						point->y = y + 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x][y + 1] = true;
-				};
-
-				if(y > 0  && !sprawdzony[x][y - 1])
-				{
-					auto pixel4 = pixbuf->get_point(x, (y - 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x;
-						point->y = y - 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x][y - 1] = true;
-				};
-				
-				if(y > 0 && x > 0 && !sprawdzony[x - 1][y - 1])
-				{
-					auto pixel4 = pixbuf->get_point((x - 1), (y - 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x - 1;
-						point->y = y - 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x - 1][y - 1] = true;
-				};
-
-				if(y < pixbuf->_height / pixbuf->_scale && x < pixbuf->_width / pixbuf->_scale && !sprawdzony[x + 1][y + 1])
-				{
-					auto pixel4 = pixbuf->get_point((x + 1), (y + 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x + 1;
-						point->y = y + 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x + 1][y + 1] = true;
-				};
-				
-				if(y > 0 && x < pixbuf->_width / pixbuf->_scale && !sprawdzony[x + 1][y - 1])
-				{
-					auto pixel4 = pixbuf->get_point((x + 1), (y - 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x + 1;
-						point->y = y - 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x + 1][y - 1] = true;
-				};
-
-				if(y < pixbuf->_height / pixbuf->_scale && x > 0 && !sprawdzony[x - 1][y + 1])
-				{
-					auto pixel4 = pixbuf->get_point((x - 1), (y + 1));
-					if(pixel4[0] == 255 && pixel4[1] == 255)
-					{
-
-						std::shared_ptr<cords> point(new cords);
-						point->x = x - 1;
-						point->y = y + 1;
-	
-						points.push_back(point);
-					};	
-					sprawdzony[x - 1][y + 1] = true;
-				};
-			}
-			break;
-		default:
-			break;
+				sprawdzony[n_x][n_y] = true;
+			};
+		};
 	};
 
 	points.pop_front();
@@ -354,26 +112,11 @@ void clear_image(GtkWidget *button, void *user_data)
 };
 
 
-void s_4(GtkWidget *button, void *user_data)
-{
-	sasiedztwo = 4;
-	sasiedztwo_label->set_label("  Sąsiedztwo: 4 ");
-};
-
-void s_6(GtkWidget *button, void *user_data)
-{
-	sasiedztwo = 6;
-	sasiedztwo_label->set_label("  Sąsiedztwo: 6 ");
-};
-
-void s_8(GtkWidget *button, void *user_data)
-{
-	sasiedztwo = 8;
-	sasiedztwo_label->set_label("  Sąsiedztwo: 8 ");
-};
 
 void line_fill(GtkWidget *button, void *user_data)
 {
+	do_the_job = true;
+	
 	clear_image(button, user_data);
 	
 	for(int i = 0; i < pixbuf->_width / pixbuf->_scale; i++)
@@ -389,8 +132,8 @@ void line_fill(GtkWidget *button, void *user_data)
 	
 	points.push_back(point);
 
-	for(int i = 0; i < 100; i++)
-		for(int l = 0; l < 100; l++)
+	for(int i = 0; i < 101; i++)
+		for(int l = 0; l < 101; l++)
 			sprawdzony[i][l] = false;
 
 	sprawdzony[point->x][point->y] = true;
@@ -400,6 +143,11 @@ void line_fill(GtkWidget *button, void *user_data)
 
 
 
+
+void stop(GtkWidget *button, void *user_data)
+{
+	do_the_job = false;
+};
 
 
 
@@ -411,18 +159,31 @@ int main(int argc, char *argv[])
 	main_window->resize(-1,-1);
 
 	VBox *main_vbox = new VBox();
-
 	HBox *menu_hbox = new HBox();
-	Button *line_button = new Button("Linia");
-	line_button->set_on_clicked(line_fill);
 	
-	Button *polygon_button = new Button("Kszałt");
-
-	sasiedztwo_label = new Label("  Sąsiedztwo: 4 ");
-
-	menu_hbox->add(line_button, 0, 0, 0);
-	menu_hbox->add(polygon_button, 0, 0, 0);
-	menu_hbox->add(sasiedztwo_label, 0, 0, 0);
+	Label *label = new Label("Sąsiedztwo: ");
+	menu_hbox->add(label, 0, 0, 0);
+	
+	Table *table = new Table();
+	menu_hbox->add(table, 0, 0, 0);
+	
+	for(int y = 0; y < 3; y++)
+	{
+		for(int x = 0; x < 3; x++)
+		{
+			sasiedztwo[x][y] = new ToggleButton();
+			sasiedztwo[x][y]->set_label(std::to_string(x + (y * 3) + 1));
+			
+			if(x == 1 && y == 1)
+			{
+				table->add(new Label("x"), x, y, x + 1, y + 1);
+				continue;
+			};
+			
+			table->add(sasiedztwo[x][y], x, y, x + 1, y + 1);
+		};
+	};
+		
 	main_vbox->add(menu_hbox, 0, 0, 0);
 	
     pixbuf = new Pixbuf();
@@ -432,32 +193,19 @@ int main(int argc, char *argv[])
 	image->set_from_pixbuf(pixbuf);  
 	main_vbox->add(image, 1, 1, 0);
  
-    clear_image(line_button->get_ref(), 0);   
+	Button *start_button = new Button("Start");
+	start_button->set_on_clicked(line_fill);
+	main_vbox->add(start_button, 0, 0, 0);
 
-	HBox *button_hbox = new HBox();
-	
-	Button *sasiedztwo_4 = new Button("Sąsiedztwo 4");
-	sasiedztwo_4->set_on_clicked(s_4);
-	
-	Button *sasiedztwo_6 = new Button("Sąsiedztwo 6");
-	sasiedztwo_6->set_on_clicked(s_6);
-	
-	Button *sasiedztwo_8 = new Button("Sąsiedztwo 8");
-	sasiedztwo_8->set_on_clicked(s_8);
-	
-	Button *reset_button = new Button("Wyczyść");
-	reset_button->set_on_clicked(clear_image);
-
-	button_hbox->add(sasiedztwo_4, 0, 0, 0);
-	button_hbox->add(sasiedztwo_6, 0, 0, 0);
-	button_hbox->add(sasiedztwo_8, 0, 0, 0);
-	button_hbox->add(reset_button, 0, 0, 0);
-
-	main_vbox->add(button_hbox, 0, 0, 0);
+	Button *stop_button = new Button("Stop");
+	stop_button->set_on_clicked(stop);
+	main_vbox->add(stop_button, 0, 0, 0);
 	
 	main_window->add(main_vbox);
-	main_window->show();
 
+    clear_image(main_window->get_ref(), 0);   
+	main_window->show();
+	
 	g_timeout_add(50, refresh_screen, 0);
 	
 	gtk_main();
