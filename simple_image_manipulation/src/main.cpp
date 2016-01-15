@@ -160,12 +160,21 @@ int main(int argc, char *argv[])
 
 	VBox *main_vbox = new VBox();
 	HBox *menu_hbox = new HBox();
+
+    pixbuf = new Pixbuf();
+    pixbuf->set_scale(5);
+
+	image = new Image();
+	image->set_from_pixbuf(pixbuf);  
+	menu_hbox->add(image, 1, 1, 0);
+	
+	VBox *s_vbox = new VBox();
 	
 	Label *label = new Label("Sąsiedztwo: ");
-	menu_hbox->add(label, 0, 0, 0);
+	s_vbox->add(label, 1, 1, 0);
 	
 	Table *table = new Table();
-	menu_hbox->add(table, 0, 0, 0);
+	s_vbox->add(table, 0, 0, 0);
 	
 	for(int y = 0; y < 3; y++)
 	{
@@ -183,16 +192,13 @@ int main(int argc, char *argv[])
 			table->add(sasiedztwo[x][y], x, y, x + 1, y + 1);
 		};
 	};
-		
-	main_vbox->add(menu_hbox, 0, 0, 0);
-	
-    pixbuf = new Pixbuf();
-    pixbuf->set_scale(5);
 
-	image = new Image();
-	image->set_from_pixbuf(pixbuf);  
-	main_vbox->add(image, 1, 1, 0);
- 
+	Label *label2 = new Label(" ");
+	s_vbox->add(label2, 1, 1, 0);
+	
+	menu_hbox->add(s_vbox, 0, 0, 0);
+	main_vbox->add(menu_hbox, 1, 1, 0);
+
 	Button *start_button = new Button("Start");
 	start_button->set_on_clicked(line_fill);
 	main_vbox->add(start_button, 0, 0, 0);
