@@ -1,0 +1,66 @@
+{
+	"studies_types": [
+		{
+			"name": "Matematyka (licencjat)",
+			"value": "ZL-MAT",
+			"available_years": ["2015"],
+			"years": ["1", "2", "3", "4"]
+		},
+		{
+			"name": "Matematyka (uzupełaniające)",
+			"value": "ZU-MAT",
+			"available_years": ["2015"],
+			"years": ["1", "2"]
+		},
+		{
+			"name": "Matematyka (podyplomowe)",		
+			"value": "PO-MAT",
+			"available_years": ["2015"],
+			"years": ["1"]
+		},
+		{
+			"name": "Nauczanie Matematyki i Informatyki (licencjat)",
+			"value": "ZL-NMI",
+			"available_years": ["2015"],
+			"years": ["1", "2", "3", "4"]
+		},
+		{
+			"name": "Nauczanie Matematyki i Informatyki (uzupełniające)",
+			"value": "ZU-NMI",
+			"available_years": ["2015"],
+			"years": ["1", "2"]
+		},
+		{
+			"name": "Informatyka (licencjat)",
+			"value": "ZL-INF",
+			"available_years": ["2015"],
+			"years": ["1", "2", "3", "4"]
+		},
+		{
+			"name": "Informatyka (uzupełniające - magister)",
+			"value": "ZU-INF",
+			"available_years": ["2015"],
+			"years": ["1", "2"]
+		},
+		{
+			"name": "Informatyka (uzupełniające - magister po inżynier)",
+			"value": "ZU-IPI",
+			"available_years": ["2015"],
+			"years": ["1", "2"]
+		},
+		{
+			"name": "Informatyka (uzupełniające - magister inżynier)",
+			"value": "ZU-IMI",
+			"available_years": ["2015"],
+			"years": ["1", "2"]
+		},
+		{
+			"name": "Informatyka i Technologie Informacyjne (podyplomowe)",
+			"value": "ZU-IMI",
+			"available_years": ["2015"],
+			"years": ["1"]
+		}		
+	],
+	"semester_in_year": ["Zimowy", "Letni"],
+	"page_title": "Plan zajęć - studia zaoczne"
+}

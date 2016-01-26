@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<style>body{font-size:10px;}</style>
+
+    <script src="jquery/jquery-2.2.0.min.js"></script>
+    <script src="jquery/jquery-ui-1.11.4/jquery-ui.js"></script>
+	<script type="text/javascript" src="jquery/tablesorter/jquery.tablesorter.js"></script>     
+    <script src="scripts/js.cookie.js"></script>
+    <script src="scripts/functions.js"></script>
+    <script src="scripts/init.js"></script>
+    <link rel="stylesheet" href="jquery/jquery-ui-1.11.4/jquery-ui.css">
+    <link rel="stylesheet" href="jquery/tablesorter/themes/blue/style.css">
+    <link rel="stylesheet" href="jquery/jquery-ui-1.11.4/theme.css">
+    <link rel="stylesheet" href="css/theme.css">
+    
+	<title>Plan zajęć</title>
+</head>
+</head>
+<body>
+	<header>
+        <div class="header" id="header_div">
+			<h1 class="header-title" id="header_title"></h1>
+    	</div>
+	</header>
+	
+	<div class="config" id="config_div">
+		<div class="config_pos" id="studies_div">
+			<select name="studies" id="studies_select">
+			</select>
+		</div>
+		<div class="config_pos" id="study_year_div"> 
+			<select name="year_of_study" id="study_year_select">
+			</select>
+		</div>
+		<div class="config_pos" id="year_div"> 
+			<select name="year" id="year_select">
+			</select>
+		</div>
+		<div class="config_pos" id="semester_div"> 
+			<select name="year_of_study" id="semester_select">
+			</select>
+		</div>
+		<div class="config_pos" id="date_from_div"> 
+			<label for="date_from" class="config_label" id="from_label">Od dnia</label>
+			<input class="datepicker" type="text" name="date_from" id="date_from_input">
+			</input>
+		</div>
+		<div class="config_pos" id="date_to_div"> 
+			<label for="date_to" class="config_label" id="to_label">Do dnia</label>
+			<input class="datepicker" type="text" name="date_to" id="date_to_input">
+			</input>
+		</div>
+		<div class="config_pos" id="submit_div"> 
+			<input type="submit" value="Pokaż" id="submit_button">
+		</div>
+	</div>	
+	<div class="config" id="expand_config_div"> 
+		<input type="submit" value="Zmień wyszukanie" id="expand_button">
+	</div>
+	<div class="schedule" id="schedule_div">
+		<h3>Section 1</h3><div><p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p></div>
+		<h3>Section 2</h3><div><p>Mauris mauris ante, blandit et, ultrices a, suscipit eget, quam. Integer ut neque. Vivamus nisi metus, molestie vel, gravida in, condimentum sit amet, nunc. Nam a nibh. Donec suscipit eros. Nam mi. Proin viverra leo ut odio. Curabitur malesuada. Vestibulum a velit eu ante scelerisque vulputate.</p></div>
+	</div>
+</body>
+</html>

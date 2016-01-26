@@ -1,0 +1,58 @@
+<style>
+
+	html { 
+		margin: 0; 
+		padding: 0; 
+	}
+
+	div.header {
+		background-color: #333333;
+		border: 3px solid transparent;
+		border-color: #00498F;
+		color: white;
+	}
+	
+	h1.header-title {
+		position: relative;
+		left: 5%;
+	}
+	
+	div.config {
+		margin: 0; 
+		padding: 0;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 10px;
+		padding-right: 10px;
+		max-width: 600px;
+		position: relative;
+		margin: 0 auto;
+		background-color: white;
+	}
+
+	div.schedule {
+		font-size: medium;
+		margin: 0; 
+		padding: 0;
+		padding-top: 10px;
+		padding-bottom: 10px;
+		padding-left: 10px;
+		padding-right: 10px;
+		max-width: 600px;
+		position: relative;
+		margin: 0 auto;
+		background-color: white;
+	}
+
+	select {
+		width: 100%;
+	}
+	
+	label.config_label {
+		font-size: 15px;
+	}
+
+	input.datepicker {
+		width: 85%;
+	}
+</style>
