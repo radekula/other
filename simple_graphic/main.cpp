@@ -30,6 +30,22 @@ float delta_distance;
 float delta_angle[2];
 
 
+float square[] = {
+		-0.5,  -0.5, 0.0,
+         0.5,  -0.5, 0.0,	
+         0.5,  0.5, 0.0,
+        -0.5,  0.5, 0.0 
+        };
+
+unsigned short square_idx[] = {0, 1, 2, 3}; 
+
+float slant[] = {
+		-0.5,  -0.5, 0.0,
+         0.5,  -0.5, 0.0,	
+         0.5,  0.5, 0.0,
+        -0.5,  0.5, 0.0 
+        };
+
 // zainicjowanie zmiennych dotyczacych okna
 void init_window()
 {
@@ -187,38 +203,71 @@ void specjal_keys(int key, int x, int y)
 };
 
 
-void uklad()
-{
-  
-  glBegin(GL_LINES);
-    glColor3f(0.0, 1.0, 0.0);
-    glVertex3f(-5.0, 0.0, 0.0);
-    glVertex3f(5.0, 0.0, 0.0); 
 
-    glColor3f(0.0, 0.0, 1.0);
-	glVertex3f(0.0, -5.0, 0.0);
-	glVertex3f(0.0,  5.0, 0.0);
+// rysowanie kwadratu z uzyciem tabeli wierzcholkow
+void draw_square()
+{
+	glVertexPointer(3, GL_FLOAT, 0, square);
+	glDrawElements(GL_QUADS, 4, GL_UNSIGNED_SHORT, square_idx);
+};
+
+
+// rysowanie litery r
+void letter_r()
+{
+// przod
+	glColor3f(1.0, 1.0, 0.0);
 	
-	glColor3f(0.0,  0.0, 0.0);
-	glVertex3f(0.0, 0.0, -5.0);
-	glVertex3f(0.0, 0.0,  5.0);
-	  
-  glEnd();
+	glPushMatrix();
+		glScalef(4.0, 20.0, 1.0);
+		glTranslatef(0.0, 0.0, 2.0);
+		draw_square();
+	glPopMatrix();
 
-}
+// tyl
+	glColor3f(0.0, 1.0, 0.0);
+	glPushMatrix();
+		glScalef(4.0, 20.0, 1.0);
+		glTranslatef(0.0, 0.0, -2.0);
+		draw_square();
+	glPopMatrix();
 
+// boki
+	glColor3f(0.0, 1.0, 1.0);
+	glPushMatrix();
+		glTranslatef(-2.0, 0.0, 0.0);
+		glRotatef(-90.0, 0.0, 1.0, 0.0);
+		glScalef(4.0, 20.0, 1.0);
+		draw_square();
+	glPopMatrix();
 
+	glColor3f(0.0, 1.0, 1.0);
+	glPushMatrix();
+		glTranslatef(2.0, 0.0, 0.0);
+		glRotatef(90.0, 0.0, 1.0, 0.0);
+		glScalef(4.0, 20.0, 1.0);
+		draw_square();
+	glPopMatrix();
+	
+// gora
+	glColor3f(0.0, 1.0, 1.0);
+	glPushMatrix();
+		glTranslatef(0.0, 10.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glScalef(4.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
 
-void kwadrat()
-{
-  glBegin(GL_QUADS);
-    glVertex3f( 0.5,  0.5, 0.0);
-    glVertex3f(-0.5,  0.5, 0.0);
-    glVertex3f(-0.5, -0.5, 0.0);
-    glVertex3f( 0.5, -0.5, 0.0);    
-  glEnd();  
-  
-}
+// dol
+	glColor3f(0.0, 1.0, 1.0);
+	glPushMatrix();
+		glTranslatef(0.0, -10.0, 0.0);
+		glRotatef(-90.0, 1.0, 0.0, 0.0);
+		glScalef(4.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+};
+
 
 void scena()
 {
@@ -231,11 +280,12 @@ void scena()
 			  look[0], look[1], look[2],
 			  side_up[0], side_up[1], side_up[2]); 
 	
-	uklad();
+    glColor3f(0.0, 0.0, 0.0);
+	letter_r();
     
-    glTranslatef(5.0, 0, 0);
+/*    glTranslatef(5.0, 0, 0);
 	glColor3f(1.0, 0.0, 0.0);
-	kwadrat();
+	kwadrat();*/
     
 	glFlush();
 	glutSwapBuffers(); 
@@ -287,6 +337,8 @@ void init(int argc, char *argv[])
 	
 	glClearColor(1.0, 1.0, 1.0, 1.0);
 	glEnable(GL_DEPTH_TEST);
+
+	glEnableClientState(GL_VERTEX_ARRAY);
 
     glutTimerFunc(1000 / fps_limit, render_frame, 0);
 };
