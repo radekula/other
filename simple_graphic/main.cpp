@@ -1,7 +1,8 @@
-#include <ctime>
-#include <cmath>
+#include <time.h>
+#include <math.h>
 #include <GL/glut.h>
 
+// ZMIENNE GLOBALNE INICJOWANE W FUNKCJI INIT
 
 // tytul okna
 char title[] = "RU";
@@ -29,22 +30,26 @@ float distance;
 float delta_distance;
 float delta_angle[2];
 
+float letters_width;
+float letters_height;
+float letters_depth;
 
 float square[] = {
-		-0.5,  -0.5, 0.0,
-         0.5,  -0.5, 0.0,	
-         0.5,  0.5, 0.0,
-        -0.5,  0.5, 0.0 
+		 0.0,  0.0, 0.0,
+         1.0,  0.0, 0.0,	
+         1.0,  1.0, 0.0,
+         0.0,  1.0, 0.0 
         };
 
 unsigned short square_idx[] = {0, 1, 2, 3}; 
 
-float slant[] = {
-		-0.5,  -0.5, 0.0,
-         0.5,  -0.5, 0.0,	
-         0.5,  0.5, 0.0,
-        -0.5,  0.5, 0.0 
+float triangle[] = {
+		 0.0,  0.0, 0.0,
+         1.0,  0.0, 0.0,	
+         1.0,  1.0, 0.0
         };
+
+unsigned short triangle_idx[] = {0, 1, 2}; 
 
 // zainicjowanie zmiennych dotyczacych okna
 void init_window()
@@ -81,13 +86,13 @@ void init_camera()
 // wyliczenie nowej pozycji kamery
 void camera_calculate_pos()
 {
-	pos[0] = std::sin(angle[0]) * distance;
+	pos[0] = sin(angle[0]) * distance;
 	pos[1] = 0;
-	pos[2] = std::cos(angle[0]) * distance;
+	pos[2] = cos(angle[0]) * distance;
 
-	pos[0] = pos[0] * std::cos(angle[1]);
-	pos[1] = std::sin(angle[1]) * distance;
-	pos[2] = pos[2] * std::cos(angle[1]);
+	pos[0] = pos[0] * cos(angle[1]);
+	pos[1] = sin(angle[1]) * distance;
+	pos[2] = pos[2] * cos(angle[1]);
 }
 
 
@@ -212,59 +217,207 @@ void draw_square()
 };
 
 
-// rysowanie litery r
-void letter_r()
+// rysowanie trojkata z uzyciem tabeli wierzcholkow
+void draw_triangle()
 {
-// przod
-	glColor3f(1.0, 1.0, 0.0);
+	glVertexPointer(3, GL_FLOAT, 0, triangle);
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, triangle_idx);
+};
+
+
+// funkcja rysujaca przod (tyl) litery R
+void draw_R_face()
+{
+	float w_size = letters_width * 0.25;
+	float h_size = letters_height * 0.125;
 	
 	glPushMatrix();
-		glScalef(4.0, 20.0, 1.0);
-		glTranslatef(0.0, 0.0, 2.0);
+		glTranslatef(0.0, 0.0, 0.0);
+		glScalef(w_size, letters_height, 1.0);
 		draw_square();
 	glPopMatrix();
 
-// tyl
-	glColor3f(0.0, 1.0, 0.0);
 	glPushMatrix();
-		glScalef(4.0, 20.0, 1.0);
-		glTranslatef(0.0, 0.0, -2.0);
+		glTranslatef(w_size, letters_height, 0.0);
+		glRotatef(-90.0, 0.0, 0.0, 1.0);
+		glScalef(h_size, w_size * 2, 1.0);
 		draw_square();
 	glPopMatrix();
 
-// boki
-	glColor3f(0.0, 1.0, 1.0);
 	glPushMatrix();
-		glTranslatef(-2.0, 0.0, 0.0);
+		glTranslatef(w_size * 3, letters_height, 0.0);
+		glRotatef(-90.0, 0.0, 0.0, 1.0);
+		glScalef(h_size, w_size, 1.0);
+		draw_triangle();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(w_size * 4, letters_height - h_size, 0.0);
+		glRotatef(180.0, 0.0, 0.0, 1.0);
+		glScalef(w_size, h_size * 3, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(w_size * 4, letters_height - h_size * 4, 0.0);
+		glRotatef(180.0, 0.0, 0.0, 1.0);
+		glScalef(w_size, h_size, 1.0);
+		draw_triangle();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(w_size, letters_height - h_size * 4, 0.0);
+		glRotatef(-90.0, 0.0, 0.0, 1.0);
+		glScalef(h_size, w_size * 2, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(w_size * 4, letters_height - h_size * 5, 0.0);
+		glRotatef(180.0, 0.0, 0.0, 1.0);
+		glScalef(w_size, h_size * 3, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(w_size * 3, letters_height - h_size * 4, 0.0);
+		glRotatef(-90.0, 0.0, 0.0, 1.0);
+		glScalef(w_size, h_size, 1.0);
+		draw_triangle();
+	glPopMatrix();
+
+};
+
+// funkcja rysujaca boki litery R
+void draw_R_side()
+{
+	return;
+// pionowe sciany
+	glPushMatrix();
 		glRotatef(-90.0, 0.0, 1.0, 0.0);
 		glScalef(4.0, 20.0, 1.0);
 		draw_square();
 	glPopMatrix();
 
-	glColor3f(0.0, 1.0, 1.0);
 	glPushMatrix();
-		glTranslatef(2.0, 0.0, 0.0);
-		glRotatef(90.0, 0.0, 1.0, 0.0);
+		glTranslatef(3.0, 0.0, 0.0);
+		glRotatef(-90.0, 0.0, 1.0, 0.0);
 		glScalef(4.0, 20.0, 1.0);
 		draw_square();
 	glPopMatrix();
-	
-// gora
-	glColor3f(0.0, 1.0, 1.0);
+
 	glPushMatrix();
-		glTranslatef(0.0, 10.0, 0.0);
-		glRotatef(90.0, 1.0, 0.0, 0.0);
-		glScalef(4.0, 4.0, 1.0);
+		glTranslatef(9.0, 0.0, 0.0);
+		glRotatef(-90.0, 0.0, 1.0, 0.0);
+		glScalef(4.0, 20.0, 1.0);
 		draw_square();
 	glPopMatrix();
 
-// dol
-	glColor3f(0.0, 1.0, 1.0);
 	glPushMatrix();
-		glTranslatef(0.0, -10.0, 0.0);
-		glRotatef(-90.0, 1.0, 0.0, 0.0);
-		glScalef(4.0, 4.0, 1.0);
+		glTranslatef(12.0, 11.0, 0.0);
+		glRotatef(-90.0, 0.0, 1.0, 0.0);
+		glScalef(4.0, 6.0, 1.0);
 		draw_square();
+	glPopMatrix();
+	
+	glPushMatrix();
+		glTranslatef(12.0, 0.0, 0.0);
+		glRotatef(-90.0, 0.0, 1.0, 0.0);
+		glScalef(4.0, 8.0, 1.0);
+		draw_square();
+	glPopMatrix();
+
+// poziome sciany
+	glPushMatrix();
+		glTranslatef(0.0, 20.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glScalef(9.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(0.0, 17.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glScalef(9.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(0.0, 11.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glScalef(9.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(0.0, 8.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glScalef(9.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(9.0, 0.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glScalef(3.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(0.0, 0.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glScalef(3.0, 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+	
+// skosne sciany
+	glPushMatrix();
+		glTranslatef(9.0, 20.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glRotatef(-45.0, 0.0, 1.0, 0.0);
+		glScalef(3.0 * sqrt(2), 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+	
+	glPushMatrix();
+		glTranslatef(9.0, 8.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glRotatef(45.0, 0.0, 1.0, 0.0);
+		glScalef(3.0 * sqrt(2), 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+
+	glPushMatrix();
+		glTranslatef(9.0, 11.0, 0.0);
+		glRotatef(90.0, 1.0, 0.0, 0.0);
+		glRotatef(-45.0, 0.0, 1.0, 0.0);
+		glScalef(3.0 * sqrt(2), 4.0, 1.0);
+		draw_square();
+	glPopMatrix();
+};
+
+// rysowanie litery R
+void letter_R()
+{
+// przod litery
+	glPushMatrix();
+		glColor3f(1.0, 1.0, 0.0);
+		glTranslatef(0.0, 0.0, 2.0);
+		draw_R_face();
+	glPopMatrix();
+	
+// tyl litery
+	glPushMatrix();
+		glColor3f(0.0, 1.0, 0.0);
+		glTranslatef(0.0, 0.0, -2.0);
+		draw_R_face();
+	glPopMatrix();
+
+// boki litery
+	glPushMatrix();
+		glColor3f(0.0, 1.0, 1.0);
+		glTranslatef(0.0, 0.0, -2.0);
+		draw_R_side();
 	glPopMatrix();
 };
 
@@ -281,7 +434,7 @@ void scena()
 			  side_up[0], side_up[1], side_up[2]); 
 	
     glColor3f(0.0, 0.0, 0.0);
-	letter_r();
+	letter_R();
     
 /*    glTranslatef(5.0, 0, 0);
 	glColor3f(1.0, 0.0, 0.0);
@@ -318,6 +471,10 @@ void render_frame(int)
 
 void init(int argc, char *argv[])
 {
+	letters_width = 16.0;
+	letters_height = 24.0;
+	letters_depth = 4.0;
+	
 	init_camera();
 	init_window();
 	camera_calculate_pos();
