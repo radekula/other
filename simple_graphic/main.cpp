@@ -21,25 +21,24 @@ int position_x = 100;
 int position_y = 100;
 
 
-// parametry poczatkowe
-float distance = 30.0;
-float delta_distance = 0.5;
-
-float delta_angle[2] = {0.1, 0.1};
-
+// parametry
 float letters_width = 10.0;
 float letters_height = 20.0;
 float letters_depth = 4.0;
 float base_width = 4.0;
 
-
 // polozenie kamery
+float distance = 30.0;
 float pos[3];
 float look[3] = {0.0, 0.0, 0.0};
 float side_up[3] = {0.0, 1.0, 0.0};
 float angle[2] = {0.0, 0.0};
 
+float delta_distance = 0.5;
+float delta_angle[2] = {0.1, 0.1};
 
+
+// tablica wierzcholkow szescianu
 float cube[] = {
         -0.5, -0.5, 0.5,
         -0.5, 0.5, 0.5,
@@ -72,6 +71,8 @@ float cube[] = {
         -0.5, -0.5, 0.5
     };
 
+
+// tablica kolorow dla szescianu
 float cube_colors[] = {
         1.0, 1.0, 0.0,
         1.0, 1.0, 0.0,
@@ -104,6 +105,8 @@ float cube_colors[] = {
         0.0, 1.0, 1.0
     };  
 
+
+// indeksy wiercholkow szescianu
 unsigned short cube_idx[] = {
         0, 1, 2, 3,
         4, 5, 6, 7,
@@ -111,6 +114,17 @@ unsigned short cube_idx[] = {
         12, 13, 14, 15,
         16, 17, 18, 19,
         20, 21, 22, 23
+    };
+
+
+// indeksy wierzcholkow pryzmatu
+unsigned short triangular_prism_idx[] = {
+        0, 1, 2, 2,
+        4, 5, 6, 6,
+        8, 9, 10, 11,
+        16, 17, 18, 19,
+        8, 9, 14, 15
+
     };
 
 
@@ -163,7 +177,6 @@ void camera_down()
 
     camera_calculate_pos();
 };
-
 
 
 // przyblizenie kamery
@@ -240,6 +253,7 @@ void specjal_keys(int key, int x, int y)
 
 
 // funkcja rysujaca szescian
+// wykorzystana tablica wierzcholkow
 void draw_cude()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -249,6 +263,7 @@ void draw_cude()
 
 
 // funkcja rysujaca szescian z kolorami
+// wykorzystana tablica wierzcholkow i tablica kolorow
 void draw_cude_with_colors()
 {
     glEnableClientState(GL_VERTEX_ARRAY);
@@ -260,60 +275,124 @@ void draw_cude_with_colors()
 };
 
 
+// funkcja ryzujaca pryzmat z kolorami
+// wykorzystana tablica wierzcholkow i tablica kolorow
+// aby nie tworzyc osobnej tablicy wykorzystane sa wierzcholki z cube (odpowiednie indeksy)
+void draw_triangular_prism_with_colors()
+{
+    glEnableClientState(GL_VERTEX_ARRAY);
+    glEnableClientState(GL_COLOR_ARRAY);
+    
+    glVertexPointer(3, GL_FLOAT, 0, cube);
+    glColorPointer(3, GL_FLOAT, 0, cube_colors);
+    glDrawElements(GL_QUADS, 24, GL_UNSIGNED_SHORT, triangular_prism_idx);
+};
+
+
 // funkcja rysujaca litere R
+// kazdy element zlozony jest z prostopadloscianu lub pryzmatu trojkatnego
 void letter_R()
 {
+    // lewa noga
     glPushMatrix();
         glTranslatef(-0.4, 0.0, 0.0);
         glScalef(0.2, 1.0, 1.0);
         draw_cude_with_colors();
     glPopMatrix();
 
+    // gora
     glPushMatrix();
         glTranslatef(0.0, 0.45, 0.0);
         glScalef(0.6, 0.1, 1.0);
         draw_cude_with_colors();
     glPopMatrix();
 
+    // srodek
     glPushMatrix();
         glTranslatef(0.0, -0.05, 0.0);
         glScalef(0.6, 0.1, 1.0);
         draw_cude_with_colors();
     glPopMatrix();
-    
+
+    // prawa strona (czesc gorna)
     glPushMatrix();
         glTranslatef(0.4, 0.2, 0.0);
         glScalef(0.2, 0.4, 1.0);
         draw_cude_with_colors();
     glPopMatrix();
-    
+
+    // prawa noga (czesc dolna)
     glPushMatrix();
         glTranslatef(0.4, -0.3, 0.0);
         glScalef(0.2, 0.4, 1.0);
         draw_cude_with_colors();
     glPopMatrix();
+
+    // skos w gornym prawym rogu
+    glPushMatrix();
+        glTranslatef(0.4, 0.45, 0.0);
+        glScalef(0.2, 0.1, 1.0);
+        glRotatef(90.0, 0.0, 0.0, 1.0);
+        draw_triangular_prism_with_colors();
+    glPopMatrix();
+
+    // skos na srodku
+    glPushMatrix();
+        glTranslatef(0.4, -0.05, 0.0);
+        glScalef(0.2, 0.1, 1.0);
+        glRotatef(0.0, 0.0, 0.0, 1.0);
+        draw_triangular_prism_with_colors();
+    glPopMatrix();
+
+    // skos na srodku
+    glPushMatrix();
+        glTranslatef(0.4, -0.05, 0.0);
+        glScalef(0.2, 0.1, 1.0);
+        glRotatef(90.0, 0.0, 0.0, 1.0);
+        draw_triangular_prism_with_colors();
+    glPopMatrix();
 };
 
 
 // funkcja ryzujaca litere U
+// kazdy element zlozony jest z prostopadloscianu lub pryzmatu trojkatnego
 void letter_U()
 {
+    // lewe ramie
     glPushMatrix();
         glTranslatef(-0.4, 0.05, 0.0);
         glScalef(0.2, 0.9, 1.0);
         draw_cude_with_colors();
     glPopMatrix();
 
+    // prawie ramie
     glPushMatrix();
         glTranslatef(0.4, 0.05, 0.0);
         glScalef(0.2, 0.9, 1.0);
         draw_cude_with_colors();
     glPopMatrix();
-    
+
+    // dol
     glPushMatrix();
         glTranslatef(0.0, -0.45, 0.0);
         glScalef(0.6, 0.1, 1.0);
         draw_cude_with_colors();
+    glPopMatrix();
+
+    // lewy skos
+    glPushMatrix();
+        glTranslatef(-0.4, -0.45, 0.0);
+        glScalef(0.2, 0.1, 1.0);
+        glRotatef(-90.0, 0.0, 0.0, 1.0);
+        draw_triangular_prism_with_colors();
+    glPopMatrix();
+
+    // prawy skos
+    glPushMatrix();
+        glTranslatef(0.4, -0.45, 0.0);
+        glScalef(0.2, 0.1, 1.0);
+        glRotatef(0.0, 0.0, 0.0, 1.0);
+        draw_triangular_prism_with_colors();
     glPopMatrix();
 };
 
@@ -343,12 +422,14 @@ void scene()
 
     glPushMatrix();
         glTranslatef(-6.0, 0.0, 0.0);
+// litery sa rysowane w rozmiarach 1.0 na 1.0 na 1.0 - skalujemy do odpowiednich rozmiarow
         glScalef(letters_width, letters_height, letters_depth);
         letter_R();
     glPopMatrix();
 
     glPushMatrix();
         glTranslatef(6.0, 0.0, 0.0);
+// litery sa rysowane w rozmiarach 1.0 na 1.0 na 1.0 - skalujemy do odpowiednich rozmiarow
         glScalef(letters_width, letters_height, letters_depth);
         letter_U();
     glPopMatrix();
@@ -356,6 +437,7 @@ void scene()
     glPushMatrix();
         glColor3f(1.0, 0.0, 0.0);
         glTranslatef(0.0, -(letters_height / 2 + 2), 0.0);
+// podstawa jest rysowana w rozmiarach 1.0 na 1.0 na 1.0 - skalujemy do odpowiednich rozmiarow
         glScalef(letters_width * 3, base_width, letters_width * 2);
         base();
     glPopMatrix();
@@ -367,6 +449,7 @@ void scene()
 
 
 // funkcja wykonywana okresowo wymuszajaca rysowanie 1 klatki
+// stala ilosc klatek na sekunde gwarantuje animacje kamery ze stala predkoscia
 void render_frame(int)
 {
     clock_t start_frame;
