@@ -35,9 +35,9 @@ float base_width = 4.0;
 
 // polozenie kamery
 float pos[3];
-float look[3];
-float side_up[3];
-float angle[2];
+float look[3] = {0.0, 0.0, 0.0};
+float side_up[3] = {0.0, 1.0, 0.0};
+float angle[2] = {0.0, 0.0};
 
 
 float cube[] = {
@@ -112,32 +112,6 @@ unsigned short cube_idx[] = {
         16, 17, 18, 19,
         20, 21, 22, 23
     };
-
-// zainicjowanie zmiennych dotyczacych okna
-void init_window()
-{
-    fps_limit = 60.0;
-    width = 400;
-    height = 300;
-    position_x = 100;
-    position_y = 100;
-};
-
-
-// zainicjowanie zmiennych dotyczacych kamery
-void init_camera()
-{
-    angle[0] = 0;
-    angle[1] = 0;
-
-    look[0] = 0.0;
-    look[1] = 0.0;
-    look[2] = 0.0;
-
-    side_up[0] = 0.0;
-    side_up[1] = 1.0;
-    side_up[2] = 0.0;
-};
 
 
 // wyliczenie nowej pozycji kamery
@@ -286,13 +260,9 @@ void draw_cude_with_colors()
 };
 
 
-
-
-
+// funkcja rysujaca litere R
 void letter_R()
 {
-    glScalef(letters_width, letters_height, letters_depth);
-
     glPushMatrix();
         glTranslatef(-0.4, 0.0, 0.0);
         glScalef(0.2, 1.0, 1.0);
@@ -325,10 +295,9 @@ void letter_R()
 };
 
 
+// funkcja ryzujaca litere U
 void letter_U()
 {
-    glScalef(letters_width, letters_height, letters_depth);
-
     glPushMatrix();
         glTranslatef(-0.4, 0.05, 0.0);
         glScalef(0.2, 0.9, 1.0);
@@ -349,6 +318,7 @@ void letter_U()
 };
 
 
+// funkcja rysujaca podstawe
 void base()
 {
     glPushMatrix();
@@ -357,7 +327,8 @@ void base()
 };
 
 
-void scena()
+// funkcja ryzujaca scene
+void scene()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     
@@ -372,18 +343,20 @@ void scena()
 
     glPushMatrix();
         glTranslatef(-6.0, 0.0, 0.0);
+        glScalef(letters_width, letters_height, letters_depth);
         letter_R();
     glPopMatrix();
 
     glPushMatrix();
         glTranslatef(6.0, 0.0, 0.0);
+        glScalef(letters_width, letters_height, letters_depth);
         letter_U();
     glPopMatrix();
 
     glPushMatrix();
         glColor3f(1.0, 0.0, 0.0);
         glTranslatef(0.0, -(letters_height / 2 + 2), 0.0);
-        glScalef(letters_width * 3, base_width, letters_width + 2);
+        glScalef(letters_width * 3, base_width, letters_width * 2);
         base();
     glPopMatrix();
     
@@ -393,6 +366,7 @@ void scena()
 
 
 
+// funkcja wykonywana okresowo wymuszajaca rysowanie 1 klatki
 void render_frame(int)
 {
     clock_t start_frame;
@@ -413,13 +387,9 @@ void render_frame(int)
 };
 
 
-
-
-
+// funkcja inicjujaca program
 void init(int argc, char *argv[])
 {
-    init_camera();
-    init_window();
     camera_calculate_pos();
     
     glutInit(&argc, argv);  
@@ -430,7 +400,7 @@ void init(int argc, char *argv[])
     
     glutCreateWindow(title);
 
-    glutDisplayFunc(scena);
+    glutDisplayFunc(scene);
     glutReshapeFunc(window_resize);
     glutKeyboardFunc(normal_keys);
     glutSpecialFunc(specjal_keys);
@@ -442,6 +412,7 @@ void init(int argc, char *argv[])
 };
 
 
+// glowna funkcja programu
 int main(int argc, char** argv)
 {
     init(argc, argv);
