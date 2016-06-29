@@ -462,6 +462,8 @@ void render_frame(int)
     
     end_frame = clock();
 
+    frame_time = end_frame - start_frame;
+
     int max_frame_time = 1000 / fps_limit;    
     if(max_frame_time > frame_time)
         glutTimerFunc(max_frame_time - (end_frame - start_frame), render_frame, 0);
