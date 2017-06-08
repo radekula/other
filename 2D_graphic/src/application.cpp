@@ -76,8 +76,7 @@ int MyApp::init(int argc, char *argv[])
 
     for(int i = 0; i < 5; i++)
     {
-//        std::string file = std::string("images/car") + std::to_string(i + 1) + ".png";
-        std::string file = std::string("images/car1") + ".png";
+        std::string file = std::string("images/car") + std::to_string(i + 1) + ".png";
         cars_images[i] = gdk_pixbuf_new_from_file(file.c_str(), 0);
         if(!cars_images[i])
             std::cout << i << std::endl;

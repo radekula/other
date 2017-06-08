@@ -8,7 +8,7 @@
 
 
 
-#define NUM_CARS 40
+#define NUM_CARS 20
 
 
 

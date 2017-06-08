@@ -14,7 +14,6 @@ private:
     int type;
     float max_speed;
     float curr_speed;
-    bool breaking;
     float acceleration;
 
     float pos_x;
