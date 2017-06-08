@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <cmath>
 #include "application.hpp"
 
 
@@ -10,6 +11,9 @@ MyApp::MyApp()
     window = 0;
     draw_area = 0;
     zoom = 1.0;
+
+    for(int i = 0; i < NUM_CARS; i++)
+        cars.push_back(std::make_shared<Car>(i));
 };
 
 
@@ -72,8 +76,11 @@ int MyApp::init(int argc, char *argv[])
 
     for(int i = 0; i < 5; i++)
     {
-        std::string file = std::string("images/car") + std::to_string(i) + ".png";
-        cars[i] = gdk_pixbuf_new_from_file(file.c_str(), 0);
+//        std::string file = std::string("images/car") + std::to_string(i + 1) + ".png";
+        std::string file = std::string("images/car1") + ".png";
+        cars_images[i] = gdk_pixbuf_new_from_file(file.c_str(), 0);
+        if(!cars_images[i])
+            std::cout << i << std::endl;
     };
 
     return 0;
@@ -107,24 +114,58 @@ void MyApp::draw_frame()
     gdk_pixbuf_fill(frame, 0);
     GdkRectangle r1, r2, dest;
 
-    r1.x = 500 - (gdk_pixbuf_get_width(road) / 2) * zoom;
-    r1.y = 300 - (gdk_pixbuf_get_height(road) / 2) * zoom;
-    r1.width = gdk_pixbuf_get_width(road) * zoom;
-    r1.height = gdk_pixbuf_get_height(road) * zoom;
-
     r2.x = 0;
     r2.y = 0;
     r2.width = 1000;
     r2.height = 600;
 
-    double offset_x = r1.x;
-    double offset_y = r1.y;
-    double scale_x = zoom;
-    double scale_y = zoom;
-    
-    if(gdk_rectangle_intersect (&r1, &r2, &dest)) 
-        gdk_pixbuf_composite(road, frame, dest.x, dest.y, dest.width, dest.height, offset_x, offset_y, scale_x, scale_y, GDK_INTERP_NEAREST, 255);
+    auto middle_of_screen_x = r2.width / 2;
+    auto middle_of_screen_y = r2.height / 2;
+    auto middle_of_highway_x = 12 * gdk_pixbuf_get_width(road) * zoom;
+    auto middle_of_highway_y = gdk_pixbuf_get_height(road) * zoom / 2.0;
+
+    for(int i = 0; i < 25; i++)
+    {
+
+        r1.x = i * gdk_pixbuf_get_width(road) * zoom - gdk_pixbuf_get_width(road) * zoom / 2;
+        r1.x = r1.x - middle_of_highway_x;
+        r1.x += middle_of_screen_x + (12 - i);
         
+        r1.y = middle_of_screen_y - middle_of_highway_y;
+
+        r1.width = std::floor(gdk_pixbuf_get_width(road) * zoom);
+        r1.height = std::floor(gdk_pixbuf_get_height(road) * zoom);
+
+        if(gdk_rectangle_intersect(&r1, &r2, &dest)) 
+            gdk_pixbuf_composite(road, frame, dest.x, dest.y, dest.width, dest.height, r1.x, r1.y, zoom, zoom, GDK_INTERP_NEAREST, 255);
+    };
+
+    for(auto car : cars)
+        car->drive(cars);
+
+    for(auto car : cars)
+    {
+        auto img = cars_images[car->get_type()];
+    
+        if(car->get_direction() == 1)
+            img = gdk_pixbuf_flip(cars_images[car->get_type()], true);
+
+        r1.x = car->get_pos_x() * gdk_pixbuf_get_width(road) * zoom - gdk_pixbuf_get_width(road) * zoom / 2;
+        r1.x = r1.x - middle_of_highway_x;
+        r1.x += middle_of_screen_x + (12 - car->get_pos_x());
+        
+        r1.y = 300 + (83 + car->get_pos_y() * 70) * zoom - std::floor(gdk_pixbuf_get_width(img) / 2.0) * zoom;
+
+        r1.width = gdk_pixbuf_get_width(img) * zoom - 1;
+        r1.height = gdk_pixbuf_get_width(img) * zoom - 1;
+        
+        if(gdk_rectangle_intersect(&r1, &r2, &dest)) 
+            gdk_pixbuf_composite(img, frame, dest.x, dest.y, dest.width, dest.height, r1.x, r1.y, zoom / 3.0, zoom / 3.0, GDK_INTERP_NEAREST, 255);
+        
+        if(car->get_direction() == 1)
+            g_object_unref(img);
+    };
+
     gtk_widget_queue_draw(draw_area);
 };
 
@@ -137,6 +178,6 @@ void MyApp::change_zoom(double delta)
     if(zoom > 1.5)
         zoom = 1.5;
 
-    if(zoom < 0.5)
-        zoom = 0.5;
+    if(zoom < 0.25)
+        zoom = 0.25;
 };

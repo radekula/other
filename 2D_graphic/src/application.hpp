@@ -1,7 +1,15 @@
 #ifndef __APPLICATION_HPP__
 #define __APPLICATION_HPP__
 
+#include <vector>
+#include <memory>
 #include <gtk/gtk.h>
+#include "car.hpp"
+
+
+
+#define NUM_CARS 40
+
 
 
 class MyApp
@@ -11,9 +19,12 @@ private:
     GtkWidget *draw_area;
     GdkPixbuf *frame;
     GdkPixbuf *road;
-    GdkPixbuf *cars[5];
+    GdkPixbuf *cars_images[5];
 
     float zoom;
+
+public:
+    std::vector<std::shared_ptr<Car>> cars;
 
 public:
     static int zoom_callback(GtkWidget *widget, GdkEventScroll *event, void *app);
