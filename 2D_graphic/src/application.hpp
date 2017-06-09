@@ -8,7 +8,7 @@
 
 
 
-#define NUM_CARS 20
+#define NUM_CARS 40
 
 
 
@@ -21,15 +21,21 @@ private:
     GdkPixbuf *road;
     GdkPixbuf *cars_images[5];
 
+    int window_size_x;
+    int window_size_y;
     float zoom;
+
+private:
+    gint64 start_time;
 
 public:
     std::vector<std::shared_ptr<Car>> cars;
 
 public:
+    static int resize_callback(GtkWidget *widget, GdkEventConfigure *event, void *app);
     static int zoom_callback(GtkWidget *widget, GdkEventScroll *event, void *app);
     static int draw_callback(GtkWidget *widget, cairo_t *cr, void *app);
-    static int tick(GtkWidget *widget, GdkFrameClock *frame_clock, void *app);
+    static int tick(void *app);
 
 public:
     MyApp();
@@ -43,6 +49,9 @@ public:
     void draw(cairo_t *cr);
     void draw_frame();
     void change_zoom(double delta);
+    
+public:
+    void resize(int x, int y);
 };
 
 
