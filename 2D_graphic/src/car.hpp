@@ -16,6 +16,7 @@ private:
     float curr_speed;
     float acceleration;
     float acceleration_y;
+    float car_in_front_speed_delta;
 
     float pos_x;
     float pos_y;
@@ -48,6 +49,7 @@ public:
     float get_pos_y();
 
     float get_curr_speed();
+    float get_rotation();
 };
 
 

@@ -85,9 +85,9 @@ int MyApp::init(int argc, char *argv[])
     for(int i = 0; i < 5; i++)
     {
         std::string file = std::string("images/car") + std::to_string(i + 1) + ".png";
-        cars_images[i] = gdk_pixbuf_new_from_file(file.c_str(), 0);
-        if(!cars_images[i])
-            std::cout << i << std::endl;
+        auto img = gdk_pixbuf_new_from_file(file.c_str(), 0);
+        cars_images[i] = gdk_pixbuf_scale_simple(img, gdk_pixbuf_get_width(img) / 3, gdk_pixbuf_get_height(img) / 3, GDK_INTERP_BILINEAR);
+        g_object_unref(img);
     };
 
     for(int i = 0; i < NUM_CARS; i++)
@@ -166,13 +166,13 @@ void MyApp::draw_frame()
         r1.x = r1.x - middle_of_highway_x;
         r1.x += middle_of_screen_x + (12 - car->get_pos_x());
         
-        r1.y = window_size_y / 2 + (83 + car->get_pos_y() * 70) * zoom - std::floor(gdk_pixbuf_get_width(img) / 2.0) * zoom;
+        r1.y = window_size_y / 2 + (15 + car->get_pos_y() * 70) * zoom - std::floor(gdk_pixbuf_get_width(img) / 2.0) * zoom;
 
         r1.width = gdk_pixbuf_get_width(img) * zoom - 1;
         r1.height = gdk_pixbuf_get_width(img) * zoom - 1;
         
         if(gdk_rectangle_intersect(&r1, &r2, &dest)) 
-            gdk_pixbuf_composite(img, frame, dest.x, dest.y, dest.width - 1, dest.height - 1, r1.x - 1, r1.y - 1, zoom / 3.0, zoom / 3.0, GDK_INTERP_NEAREST, 255);
+            gdk_pixbuf_composite(img, frame, dest.x, dest.y, dest.width - 1, dest.height - 1, r1.x - 1, r1.y - 1, zoom, zoom, GDK_INTERP_BILINEAR, 255);
         
         if(car->get_direction() == 1)
             g_object_unref(img);

@@ -27,6 +27,7 @@ void Car::look_around(std::vector<std::shared_ptr<Car>> &all_cars)
     can_accelerate = true;
     need_breaking = false;
     can_change_line = true;
+    car_in_front_speed_delta = 0;
     
     for(auto car : all_cars)
     {
@@ -42,7 +43,7 @@ void Car::look_around(std::vector<std::shared_ptr<Car>> &all_cars)
         auto car_pos_y = car->get_pos_y();
 
         // check if i'm in fast line
-        if(std::fabs(pos_y) > 0.65)
+        if(std::fabs(pos_y) < 0.65)
             in_fast_line = true;
 
         auto in_front = direction == 1 ? pos_x > car_pos_x : pos_x < car_pos_x;
@@ -53,7 +54,13 @@ void Car::look_around(std::vector<std::shared_ptr<Car>> &all_cars)
 
         // check if car is in front of me
         if(in_front && distance < 1.4 && same_line)
+        {
             car_in_front = true;
+            
+            auto speed_delta = std::fabs(curr_speed - car->get_curr_speed());
+            if(speed_delta > car_in_front_speed_delta)
+                car_in_front_speed_delta = speed_delta;
+        }
 
         // check if i need to brake
         if(car_in_front && car->get_curr_speed() < curr_speed)
@@ -84,10 +91,15 @@ void Car::drive(std::vector<std::shared_ptr<Car>> &all_cars)
         {
             // can I change line?
             if(can_change_line)
+            {
                 // yes - change line
-                acceleration_y = 0.01;
-
-            acceleration -= 0.05;
+                acceleration_y -= 0.001;
+                acceleration -= car_in_front_speed_delta / 500;
+            }
+            else
+            {
+                acceleration -= 0.05;
+            };
         };
 
         // don't need to brake anymore
@@ -99,8 +111,16 @@ void Car::drive(std::vector<std::shared_ptr<Car>> &all_cars)
             acceleration += 0.01;
 
         // if I'm in fast line can I change to slow line?
-        if(in_fast_line && can_change_line && !acceleration_y)
-            acceleration_y = -0.01;
+        if(in_fast_line && can_change_line)
+        {
+            if(acceleration_y < 0)
+                acceleration_y = 0;
+            
+            acceleration_y += 0.001;
+        }
+        
+        if(!can_accelerate && car_in_front && std::fabs(pos_y) < 1)
+            acceleration_y = acceleration_y * 2;
 
         // stay in lines
         if(direction == -1)
@@ -133,6 +153,12 @@ void Car::drive(std::vector<std::shared_ptr<Car>> &all_cars)
         };
 
         // check if I not breaking or accelerating to quick
+        if(acceleration_y > 0.01)
+            acceleration_y = 0.01;
+
+        if(acceleration_y < -0.01)
+            acceleration_y = -0.01;
+            
         if(acceleration < -10)
             acceleration = -10;
 
@@ -149,17 +175,20 @@ void Car::drive(std::vector<std::shared_ptr<Car>> &all_cars)
         if(curr_speed < 100)
             curr_speed = 100;
 
+
+
         pos_x += ((-direction * curr_speed) / 2400.0);
-        auto change_y = acceleration_y * (curr_speed / 140);
+
+        auto change_y = acceleration_y * std::fabs((curr_speed / 140));
         pos_y = pos_y > 0 ? pos_y + change_y : pos_y - change_y;
     }
     else
     {
-        type = 4;
+        type = rand() % 5;
         direction = rand() % 2 ? 1 : -1;
 
         pos_x = direction == 1 ? 25 : 0;
-        pos_y = direction == 1 ? -0.3 : 0.3;
+        pos_y = direction == 1 ? -1 : 1;
 
         curr_speed = max_speed = rand() % 50 + 100;
         acceleration = 0;
@@ -229,4 +258,12 @@ float Car::get_pos_y()
 float Car::get_curr_speed()
 {
     return curr_speed;
+};
+
+
+
+
+float Car::get_rotation()
+{
+    return acceleration_y;
 };
